@@ -1,0 +1,57 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100 bg-cover bg-center" style="background-image: url('https://i.pinimg.com/564x/2d/09/7e/2d097eac85f0bccc6078ff69a8aa7007.jpg')">
+
+  <div class="bg-white p-12 rounded-lg shadow-lg w-full max-w-md">
+    <h2 class="text-4xl font-bold text-center text-blue-800 mb-6 ">Inscription</h2>
+    <form [formGroup]="signupForm" class="space-y-4">
+
+      <div>
+        <label for="name" class="block text-gray-700 font-semibold mb-2">Nom complet</label>
+        <input formControlName="name" type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <div *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched" class="text-red-500 text-sm mt-2">
+          <span *ngIf="signupForm.get('name')?.errors?.['required']">Le nom complet est requis.</span>
+        </div>
+      </div>
+
+      <div>
+        <label for="email" class="block text-gray-700 font-semibold mb-2">Email</label>
+        <input formControlName="email" type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched" class="text-red-500 text-sm mt-2">
+          <span *ngIf="signupForm.get('email')?.errors?.['required']">L'email est requis.</span>
+          <span *ngIf="signupForm.get('email')?.errors?.['email']">L'email n'est pas valide.</span>
+        </div>
+      </div>
+
+      <div>
+        <label for="password" class="block text-gray-700 font-semibold mb-2">Mot de passe</label>
+        <input formControlName="password" type="password" id="password" name="password" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched" class="text-red-500 text-sm mt-2">
+          <span *ngIf="signupForm.get('password')?.errors?.['required']">Le mot de passe est requis.</span>
+          <span *ngIf="signupForm.get('password')?.errors?.['minlength']">Le mot de passe doit contenir au moins 6 caractères.</span>
+        </div>
+      </div>
+
+      <div>
+        <label for="password_confirmation" class="block text-gray-700 font-semibold mb-2">Confirmer le mot de passe</label>
+        <input formControlName="password_confirmation" type="password" id="password_confirmation" name="password_confirmation" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <div *ngIf="signupForm.get('password_confirmation')?.invalid && signupForm.get('password_confirmation')?.touched" class="text-red-500 text-sm mt-2">
+          <span *ngIf="signupForm.get('password_confirmation')?.errors?.['required']">La confirmation du mot de passe est requise.</span>
+          <span *ngIf="signupForm.get('password_confirmation')?.errors?.['minlength']">Le mot de passe doit contenir au moins 6 caractères.</span>
+        </div>
+        <div *ngIf="passwordError" class="text-red-500 text-sm mt-2">
+          Confirmation du mot de passe n'est pas conforme.
+        </div>
+      </div>
+
+      <div>
+        <button (click)="onSignupClick()" type="button" class="w-full bg-gradient-to-r from-blue-600 to-blue-950 text-white py-3 px-6 rounded-lg shadow-lg hover:from-blue-500 hover:to-blue-800 transition duration-300">
+          S'inscrire
+        </button>
+      </div>
+    </form>
+
+    <p class="mt-6 text-center text-gray-600">
+      Vous avez déjà un compte ? <a [routerLink]="['/connexion']" class="text-blue-500 hover:underline font-bold underline">Connectez-vous</a>
+    </p>
+  </div>
+</div>
+

@@ -1,0 +1,265 @@
+<div class="overflow-hidden h-screen">
+  <div class=" bg-gray-100 h-full">
+    <nav class="bg-gradient-to-r from-blue-950 to-blue-600 p-6 shadow-lg text-white sticky top-0 z-10">
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="text-xl font-bold">Mon Profil</div>
+        <div class="flex items-center">
+          <a
+            (click)="logout()"
+            class="bg-white text-blue-700 px-4 py-2 rounded-md shadow-lg">Déconnexion</a>
+        </div>
+      </div>
+    </nav>
+
+
+    <div class="mx-auto mt-12 px-4 flex flex-row h-full sticky top-0">
+      @if (userData$ | async; as user) {
+        <aside class="w-full md:w-1/4 mb-8 md:mb-0 sticky top-0 overflow-hidden">
+          <div class="bg-white shadow-lg rounded-lg ">
+            <div class="p-6 bg-blue-950 text-white text-center">
+              <h2 class="text-2xl font-semibold">{{ user.fullName }}</h2>
+              <p class="text-sm">{{ user.email }}</p>
+            </div>
+            <div class="p-6">
+              <ul>
+                <li class="mb-4">
+                  <a
+                    (click)="onSectionSelect(Sections.DOCUMENTS)"
+                    class="text-lg cursor-pointer font-semibold text-blue-700 hover:text-blue-400 transition duration-300">Mes Documents</a>
+                </li>
+                <li class="mb-4">
+                  <a
+                    (click)="onSectionSelect(Sections.ORDERS)"
+                    class="text-lg cursor-pointer font-semibold text-blue-700 hover:text-blue-400 transition duration-300">Demandes</a>
+                </li>
+                <li class="mb-4">
+                  <a
+                    (click)="onSectionSelect(Sections.APPOINTMENTS)"
+                    class="text-lg cursor-pointer font-semibold text-blue-700 hover:text-blue-400 transition duration-300">Prendre un Rendez-vous</a>
+                </li>
+                <li class="mb-4">
+                  <a
+                    (click)="onSectionSelect(Sections.MY_APPOINTMENTS)"
+                    class="text-lg cursor-pointer font-semibold text-blue-700 hover:text-blue-400 transition duration-300">Mes Rendez-vous</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+      }
+
+
+      <div class="w-full md:w-3/4 md:pl-8 h-screen">
+
+        @if(selectedSection === Sections.DOCUMENTS) {
+          <section id="Documents" class="mb-12">
+            <div class="bg-white shadow-lg rounded-lg p-6">
+              <div class="flex flex-row">
+                <i class="material-icons text-3xl px-1 text-gray-500">folder</i>
+                <p class="text-3xl font-bold px-2 text-gray-500">Mes Demandes</p>
+              </div>
+              <div class="relative overflow-hidden h-full">
+                <div class="overflow-y-auto h-[520px]">
+                  @if(userRequests$ | async) {
+                    <table class="w-full bg-white border-collapse rounded-lg">
+                      <thead class="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-950 text-white z-10">
+                      <tr class="z-10">
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Date</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Motif</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-right">Tarif</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-right">Status</th>
+                      </tr>
+                      </thead>
+                      <tbody class="z-0">
+                        @for(request of userRequests$ | async; track request) {
+                          <tr class="bg-white hover:bg-blue-50 transition-colors duration-300 z-0">
+                            <td class="px-6 text-sm py-4 border-b border-gray-200">{{ request.createdAt.split('T')[0] }}</td>
+                            <td class="px-6 text-sm py-4 border-b border-gray-200">{{ request.motif }}</td>
+
+                            <td
+                              [ngClass]="{'text-orange-500 text-lg': request.tarif === null}"
+                              class="px-6 text-sm py-4 border-b border-gray-200 text-right">{{ request.tarif === null ? 'en cours' : request.tarif }}</td>
+                            <td
+                              [ngClass]="{
+                            'text-orange-500 font-bold text-lg': request.status === 'en cours',
+                            'text-red-500 font-bold text-lg': request.status === 'annuler' || request.status === 'bloquer',
+                            'text-green-500 font-bold text-lg': request.status === 'traité',
+
+                            }"
+                              class="px-6 py-4 border-b border-gray-200 text-right">{{ request.status }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+                </div>
+              </div>
+            </div>
+          </section>
+        }
+
+        @if(selectedSection === Sections.ORDERS) {
+          <section id="demandes" class="mb-12 overflow-hidden h-full">
+            <div class="bg-white shadow-lg rounded-lg p-6 overflow-auto h-[80%]">
+              <div class="flex flex-row">
+                <i class="material-icons text-3xl px-1 text-gray-500">folder</i>
+                <p class="text-3xl font-bold px-2 text-gray-500">Nouvelle demande</p>
+              </div>
+              <form [formGroup]="ordersFormGroup">
+                <div class="mb-4">
+                  <select formControlName="motif" class="mt-1 block w-full py-2 px-3 border border-gray-200 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <option value="" selected disabled>TYPE DE RENDEZ-VOUS</option>
+                    <option value="Consultation">Consultation</option>
+                    <option value="Traduction officiel">Traduction officiel</option>
+                    <option value="Traduction Spécialisées">Traduction Spécialisées</option>
+                    <option value="Suivi">Suivi</option>
+                  </select>
+                  <div *ngIf="ordersFormGroup.get('motif')?.invalid && ordersFormGroup.get('motif')?.touched">
+                    <p class="text-red-500">Veuillez sélectionner un motif.</p>
+                  </div>
+                </div>
+
+                <div class="mb-6">
+                  <label for="demande-description" class="block text-gray-700 font-semibold mb-2">Description</label>
+                  <textarea id="demande-description" formControlName="description" placeholder="Décrivez votre demande" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4"></textarea>
+                  <div *ngIf="ordersFormGroup.get('description')?.invalid && ordersFormGroup.get('description')?.touched">
+                    <p class="text-red-500">La description est requise.</p>
+                  </div>
+                </div>
+
+                <div class="mb-6">
+                  <label for="demande-file" class="block text-gray-700 font-semibold mb-2">Ajouter une pièce jointe</label>
+                  <input type="file" id="demande-file" (change)="onFileSelect($event)" formControlName="files" multiple class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <div *ngIf="ordersFormGroup.get('files')?.invalid && ordersFormGroup.get('files')?.touched">
+                    <p class="text-red-500">Veuillez ajouter un ou plusieurs fichiers PDF.</p>
+                  </div>
+                </div>
+
+                <button
+                  (click)="onSubmitOrderClick()"
+                  type="button" class="w-full bg-gradient-to-r from-blue-600 to-blue-950 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+                  Soumettre la Demande
+                </button>
+              </form>
+            </div>
+          </section>
+        }
+
+        @if (selectedSection === Sections.APPOINTMENTS) {
+          <section id="rendez-vous" class=" h-full">
+            <div class="bg-white shadow-lg rounded-lg p-6 h-[80%]">
+            <div class="flex flex-row">
+              <i class="material-icons text-3xl px-1 text-gray-500">calendar_month</i>
+              <p class="text-3xl font-bold px-2 text-gray-500">Prendre un Rendez-vous</p>
+            </div>
+
+              <div class="mb-4">
+                <select [(ngModel)]="selectedMotif" class="mt-1 block w-full py-2 px-3 border border-gray-200 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <option class="text-gray-200" value="0" selected disabled>TYPE DE RENDEZ-VOUS</option>
+                  <option value="Consultation">Consultation</option>
+                  <option value="Traduction officiel">Traduction officiel</option>
+                  <option value="Traduction Spécialisées">Traduction Spécialisées</option>
+                  <option value="Suivi">Suivi</option>
+                </select>
+              </div>
+
+              <div class="flex justify-between mb-4">
+                <button
+                  [ngClass]="{'cursor-not-allowed bg-gray-200': disablePreviousButton, 'bg-blue-500': !disablePreviousButton}"
+                  [disabled]="disablePreviousButton"
+                  (click)="onPreviousWeekClick()" class=" text-white font-bold py-2 px-4 rounded ">Semaine précédente</button>
+                <button (click)="onNextWeekClick()" class="bg-blue-500 text-white py-2 font-bold px-4 rounded ">Semaine suivante</button>
+              </div>
+
+                  <div class="grid grid-cols-7 gap-2 overflow-auto h-[380px]">
+                    <div *ngFor="let day of weekDays" class="border p-4 text-center h-[680px]">
+                      <p class="font-semibold mb-4">{{ day.day }}</p>
+                      <div *ngFor="let time of times" class="py-1">
+                        @if (appointmentList$ | async; as list) {
+                          <div
+                            [ngClass]="{
+                            'bg-blue-200 border-4 border-blue-400 ': isSelectedAppointmentSelected(day, time),
+                            'bg-red-500 cursor-not-allowed': isAppointmentBooked(day.day, time, list) && !isSelectedAppointmentSelected(day, time),
+                            'bg-green-200': !isAppointmentBooked(day.day, time, list) && !day.enabled && !isSelectedAppointmentSelected(day, time),
+                            'bg-gray-200 cursor-not-allowed': day.enabled
+                          }"
+                            (click)="!isAppointmentBooked(day.day, time, list) && !day.enabled ? onAppointmentSelect(day, time) : null"
+                            class="cursor-pointer rounded p-2"
+                          >
+                            {{ time }}
+                          </div>
+                        } @else {
+                          <div>Loading appointments</div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+
+              <div class="mt-6">
+                <button
+                  (click)="onBookClick()"
+                  type="button" class="w-full bg-gradient-to-r from-blue-600 to-blue-950 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+                  Soumettre la Demande de RDV
+                </button>
+              </div>
+            </div>
+          </section>
+        }
+
+        @if (selectedSection === UserScreens.MY_APPOINTMENTS) {
+          <section class="mb-12 h-full">
+            <div class="bg-white shadow-lg rounded-lg p-6 h-[80%]">
+              <div class="flex flex-row">
+                <i class="material-icons text-3xl px-1 text-gray-500">calendar_month</i>
+                <p class="text-3xl font-bold px-2 text-gray-500">Mes Rendez-vous</p>
+              </div>
+              <div class="relative overflow-hidden h-full">
+                <div class="overflow-y-auto h-[520px]">
+                  <table class="w-full bg-white border-collapse rounded-lg">
+                    <thead class="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-950 text-white z-10">
+                    <tr class="z-10">
+                      <th class="px-6 py-3 text-left text-sm font-semibold">Date</th>
+                      <th class="px-6 py-3 text-left text-sm font-semibold">Heur</th>
+                      <th class="px-6 py-3 text-left text-sm font-semibold text-right">Motif</th>
+                      <th class="px-6 py-3 text-left text-sm font-semibold text-right">Status</th>
+                      <th class="px-6 py-3 text-left text-sm font-semibold text-right">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="z-0">
+                      @for(appointment of usersAppointments$ | async; track appointment) {
+                        <tr class="bg-white hover:bg-blue-50 transition-colors duration-300 z-0">
+                          <td class="px-6 text-sm py-4 border-b border-gray-200">{{ appointment.date }}</td>
+                          <td class="px-6 text-sm py-4 border-b border-gray-200">{{ appointment.time }}</td>
+                          <td class="px-6 text-sm py-4 border-b border-gray-200 text-right">{{ appointment.motif }}</td>
+                          <td
+                            [ngClass]="{
+                            'text-orange-500 font-bold text-lg': appointment.status === 'en cours',
+                            'text-red-500 font-bold text-lg': appointment.status === 'refuser' || appointment.status === 'annuler',
+                            'text-green-500 font-bold text-lg': appointment.status === 'accepter',
+
+                            }"
+                            class="px-6 py-4 border-b border-gray-200 text-right">{{ appointment.status }}</td>
+                          <td class="px-6 py-4 border-b border-gray-200 text-right">
+                            <button
+                              (click)="onDeleteOrCancelClick(appointment.status, appointment.id)"
+                              class="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-2 px-5 rounded-full shadow-lg hover:shadow-xl hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 ml-4">
+                              {{ appointment.status === 'refuser' || appointment.status === 'annuler' ? 'Supprimer' : 'Annuler' }}
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+        }
+
+      </div>
+    </div>
+  </div>
+</div>

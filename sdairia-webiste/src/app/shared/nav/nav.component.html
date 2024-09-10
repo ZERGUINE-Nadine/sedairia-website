@@ -1,0 +1,47 @@
+<nav
+  [ngClass]="{ 'bg-black ' : !isScrolled }"
+  class="fixed top-0 left-0  z-10 w-screen">
+
+  <div class=" flex  ">
+
+    <div class=" flex-shrink-0  left-">
+      <img class="w-[120px] h-[90px]" src="images/logo.png" alt="Logo">
+    </div>
+
+    <div class="flex-grow flex justify-center py-6">
+      <div class="flex gap-x-12">
+        <a
+          [ngClass]="{'text-blue-800 border-b border-blue-700': selectedMenuItem === 'home', 'text-white': selectedMenuItem !== 'home'}"
+          (click)="scrollToSection('home')"
+          class="cursor-pointer text-lg font-semibold hover:text-blue-400 transition duration-300">
+          Accueil
+        </a>
+        <a
+          [ngClass]="{'text-blue-800 border-b border-blue-700': selectedMenuItem === 'about', 'text-white': selectedMenuItem !== 'about'}"
+          (click)="scrollToSection('about')"
+          class="cursor-pointer  text-lg font-semibold hover:text-blue-400 transition duration-300">À propos de nous</a>
+        <a
+          [ngClass]="{'text-blue-800 border-b border-blue-700': selectedMenuItem === 'services', 'text-white': selectedMenuItem !== 'services'}"
+
+          (click)="scrollToSection('services')" class="cursor-pointer text-white text-lg font-semibold hover:text-blue-400 transition duration-300">Service</a>
+        <a
+          [ngClass]="{'text-blue-800 border-b border-blue-700': selectedMenuItem === 'hours', 'text-white': selectedMenuItem !== 'hours'}"
+
+          (click)="scrollToSection('hours')" class="cursor-pointer text-white text-lg font-semibold hover:text-blue-400 transition duration-300">Horaires</a>
+        <a
+
+          [ngClass]="{'text-blue-800 border-b border-blue-700': selectedMenuItem === 'contact', 'text-white': selectedMenuItem !== 'contact'}"
+
+          (click)="scrollToSection('contact')" class="cursor-pointer text-white text-lg font-semibold hover:text-blue-400 transition duration-300">Contact</a>
+      </div>
+
+    </div>
+
+
+    <div class="flex gap-x-4 mr-8 py-6">
+      <a [routerLink]="['/connexion']"  class="cursor-pointer bg-gradient-to-r from-blue-600 to-blue-950 rounded-md p-2 text-white text-lg font-semibold transition duration-300">Connexion</a>
+      <a [routerLink]="['/inscription']" class="cursor-pointer border border-blue-950 rounded-md p-2 text-blue-700 text-lg font-semibold transition duration-300">Inscription</a>
+    </div>
+
+  </div>
+</nav>

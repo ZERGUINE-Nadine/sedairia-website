@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.mat-mdc-snack-bar-container {
+  &.blue-snackbar {
+    --mdc-snackbar-container-color: #2196f3;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+
+  &.success-snackbar {
+    --mdc-snackbar-container-color: #0009;
+    --mat-mdc-snack-bar-button-color: green;
+    --mdc-snackbar-supporting-text-color: green;
+  }
+
+  &.warning-snackbar {
+    --mdc-snackbar-container-color: #0009;
+    --mat-mdc-snack-bar-button-color: #ffeb3b;
+    --mdc-snackbar-supporting-text-color: #ffeb3b;
+  }
+
+  &.error-snackbar {
+    --mdc-snackbar-container-color: #0009;
+    --mat-mdc-snack-bar-button-color: #f44336;
+    --mdc-snackbar-supporting-text-color: #f44336;
+  }
+}
